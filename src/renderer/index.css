@@ -92,14 +92,22 @@ body {
 }
 
 .tree-toggle {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
+  margin-right: 4px;
   color: #666;
-  font-size: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+  border-radius: 4px;
+}
+
+.tree-toggle:hover {
+  color: #1976d2;
+  background-color: #f0f7ff;
 }
 
 .tree-toggle.expanded {
