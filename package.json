@@ -1,0 +1,50 @@
+{
+  "name": "diary",
+  "version": "1.0.0",
+  "description": "日记桌面应用",
+  "main": "dist/main/main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "tsc && npm run build:react",
+    "build:react": "vite build",
+    "dev": "concurrently \"npm run dev:react\" \"wait-on http://localhost:5173 && electron .\"",
+    "dev:react": "vite",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "@types/react": "^18.2.79",
+    "@types/react-dom": "^18.2.25",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "electron": "^29.3.0",
+    "electron-builder": "^24.13.3",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.10",
+    "wait-on": "^7.2.0"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "build": {
+    "appId": "com.diary.app",
+    "productName": "日记",
+    "directories": {
+      "output": "release"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}
