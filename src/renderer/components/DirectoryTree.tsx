@@ -32,19 +32,27 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   onClick,
   level,
 }) => {
-  const handleClick = (e: React.MouseEvent) => {
+  const handleToggleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (hasChildren && onToggle) {
       onToggle(e);
     }
+  };
+
+  const handleNodeClick = () => {
     if (onClick) {
       onClick();
     }
   };
 
   return (
-    <div className={`tree-node ${active ? 'active' : ''}`} onClick={handleClick}>
+    <div className={`tree-node ${active ? 'active' : ''}`} onClick={handleNodeClick}>
       {hasChildren ? (
-        <span className={`tree-toggle ${expanded ? 'expanded' : ''}`}>
+        <span
+          className={`tree-toggle ${expanded ? 'expanded' : ''}`}
+          onClick={handleToggleClick}
+          style={{ cursor: 'pointer' }}
+        >
           ▶
         </span>
       ) : (
