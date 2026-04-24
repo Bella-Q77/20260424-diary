@@ -17,7 +17,7 @@ interface TreeNodeProps {
   hasChildren?: boolean;
   expanded?: boolean;
   active?: boolean;
-  onToggle?: (e: React.MouseEvent) => void;
+  onToggle?: () => void;
   onClick?: () => void;
   level: 'year' | 'month' | 'day';
 }
@@ -35,7 +35,7 @@ const TreeNode: React.FC<TreeNodeProps> = ({
   const handleToggleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (hasChildren && onToggle) {
-      onToggle(e);
+      onToggle();
     }
   };
 
@@ -51,7 +51,6 @@ const TreeNode: React.FC<TreeNodeProps> = ({
         <span
           className={`tree-toggle ${expanded ? 'expanded' : ''}`}
           onClick={handleToggleClick}
-          style={{ cursor: 'pointer' }}
         >
           ▶
         </span>
@@ -107,6 +106,7 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
 }) => {
   const [expandedYears, setExpandedYears] = useState<Set<string>>(new Set());
   const [expandedMonths, setExpandedMonths] = useState<Set<string>>(new Set());
+  const [initialized, setInitialized] = useState(false);
 
   const sortedYears = useMemo(() => {
     if (!data || !data.years) return [];
@@ -114,17 +114,17 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
   }, [data]);
 
   useEffect(() => {
-    if (selectedYear && !expandedYears.has(selectedYear)) {
+    if (!initialized && selectedYear) {
       setExpandedYears(prev => new Set(prev).add(selectedYear));
+      if (selectedMonth) {
+        const monthKey = `${selectedYear}-${selectedMonth}`;
+        setExpandedMonths(prev => new Set(prev).add(monthKey));
+      }
+      setInitialized(true);
     }
-    const monthKey = `${selectedYear}-${selectedMonth}`;
-    if (selectedMonth && !expandedMonths.has(monthKey)) {
-      setExpandedMonths(prev => new Set(prev).add(monthKey));
-    }
-  }, [selectedYear, selectedMonth, expandedYears, expandedMonths]);
+  }, [initialized, selectedYear, selectedMonth]);
 
-  const toggleYear = (year: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleYear = (year: string) => {
     setExpandedYears(prev => {
       const newSet = new Set(prev);
       if (newSet.has(year)) {
@@ -136,8 +136,7 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
     });
   };
 
-  const toggleMonth = (year: string, month: string, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const toggleMonth = (year: string, month: string) => {
     const monthKey = `${year}-${month}`;
     setExpandedMonths(prev => {
       const newSet = new Set(prev);
@@ -177,7 +176,7 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
                 hasChildren
                 expanded={expandedYears.has(year)}
                 active={selectedYear === year && !selectedMonth}
-                onToggle={(e) => toggleYear(year, e)}
+                onToggle={() => toggleYear(year)}
                 level="year"
               />
               {expandedYears.has(year) && (
@@ -193,7 +192,7 @@ const DirectoryTree: React.FC<DirectoryTreeProps> = ({
                           hasChildren
                           expanded={expandedMonths.has(monthKey)}
                           active={monthActive}
-                          onToggle={(e) => toggleMonth(year, month, e)}
+                          onToggle={() => toggleMonth(year, month)}
                           level="month"
                         />
                         {expandedMonths.has(monthKey) && (
